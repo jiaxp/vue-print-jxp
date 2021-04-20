@@ -2,7 +2,7 @@
   "name": "vue-print-jxp",
   "description": "print打印",
   "version": "1.0.5",
-  "author": "贾晓朋 <jiaxp3@lenovo.com>",
+  "author": "jiaxiaopeng <jiaxp3@lenovo.com>",
   "license": "MIT",
   "private": false,
   "main": "dist/vue-print.js",
