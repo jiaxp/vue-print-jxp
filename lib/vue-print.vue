@@ -1,5 +1,5 @@
 <template>
-  <div class="vue-print">
+  <div ref="print">
     <slot />
   </div>
 </template>
@@ -9,6 +9,24 @@ import html2canvas from 'html2canvas'
 
 export default {
   name: 'VuePrint',
+  props: {
+    direction: {
+      type: String,
+      default: () => 'portrait'
+    },
+    scale: {
+      type: Number,
+      default: () => 2
+    },
+    margin: {
+      type: Array,
+      default: () => [40]
+    },
+    backgroundColor: {
+      type: String,
+      default: () => '#FFFFFF'
+    }
+  },
   data () {
     return {}
   },
@@ -16,17 +34,15 @@ export default {
     /**
      * 打印
      * */
-    print (ele, opts) {
-      opts = Object.assign({
-        direction: 'portrait', // 空-默认 portrait-纵向 landscape-横向
-        margin: [40], // 打印四周边距
-        scale: 2, // 清晰度，越大越清晰
-        backgroundColor: '#ffffff', // 背景
-        startCallback: null, // 处理打印-start
-        endCallback: null, // 处理打印-end
-        beforePrint: null, // 打印-before
-        afterPrint: null // 打印-after
-      }, opts)
+    print () {
+      let ele = this.$refs.print.$el
+      let opts = {
+        direction: this.direction, // 空-默认 portrait-纵向 landscape-横向
+        margin: this.margin, // 打印四周边距
+        scale: this.scale, // 清晰度，越大越清晰
+        backgroundColor: this.backgroundColor, // 背景
+      }
+      console.log('****** opts ******', opts)
       let A4_width = 794 // A4纸张宽
       let A4_height = 1123 // A4纸张高
       let marginStr = opts.margin.join('px ') + 'px' // 打印边距
@@ -41,7 +57,7 @@ export default {
         width = A4_height
         height = Math.min(A4_width, ele_height) // 高度取最小值（防止出现空白页）
       }
-      opts.startCallback && opts.startCallback()
+      this.$emit('start') // 处理打印-start
       // 清晰度
       let _canvas = document.createElement('canvas')
       let scale = opts.scale
@@ -100,7 +116,7 @@ export default {
           win.document.body.appendChild(canvas)
 
           const beforePrint = () => {
-            opts.beforePrint && opts.beforePrint()
+            this.$emit('before') // 打印-before
           }
           const afterPrint = () => {
             // 删除旧的iframe
@@ -108,13 +124,13 @@ export default {
             if (oldIframe) {
               document.body.removeChild(oldIframe)
             }
-            opts.afterPrint && opts.afterPrint()
+            this.$emit('after') // 打印-after
           }
           win.onbeforeprint = beforePrint
           win.onafterprint = afterPrint
 
           win.print()
-          opts.endCallback && opts.endCallback()
+          this.$emit('end') // 处理打印-end
         }
       })
     }
