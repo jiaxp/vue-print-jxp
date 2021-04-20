@@ -1,5 +1,5 @@
 <template>
-  <div ref="print">
+  <div>
     <slot />
   </div>
 </template>
@@ -35,14 +35,13 @@ export default {
      * 打印
      * */
     print () {
-      let ele = this.$refs.print.$el
+      let ele = this.$el
       let opts = {
         direction: this.direction, // 空-默认 portrait-纵向 landscape-横向
         margin: this.margin, // 打印四周边距
         scale: this.scale, // 清晰度，越大越清晰
         backgroundColor: this.backgroundColor, // 背景
       }
-      console.log('****** opts ******', opts)
       let A4_width = 794 // A4纸张宽
       let A4_height = 1123 // A4纸张高
       let marginStr = opts.margin.join('px ') + 'px' // 打印边距
